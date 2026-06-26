@@ -1,11 +1,12 @@
+import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
+import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 
-import { Injectable, NotFoundException, RequestTimeoutException, UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { AuthRegiterRequestDto } from './dto/request/auth.register.request.dto';
 import { AuthRegiterResponseDto } from './dto/response/auth.register.response.dto';
 import { AuthLoginRequestDto } from './dto/request/auth.login.request.dto';
-import { JwtService } from '@nestjs/jwt';
+import { UserDto } from "../users/dto/user.dto"
 
 @Injectable()
 export class AuthService{
@@ -36,7 +37,7 @@ export class AuthService{
         };
     }
 
-    async login(authLoginResquestDto: AuthLoginRequestDto, ){
+    async login(authLoginResquestDto: AuthLoginRequestDto, ): Promise<{ tokenJwt: string }>{
         const user = await this.prismaService.user.findUnique({
             where: {
                 email: authLoginResquestDto.email,
