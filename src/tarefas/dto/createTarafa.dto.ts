@@ -1,5 +1,5 @@
 export class CreateTarafaDto {
   name!: string;
-  descricao?: string 
-  user_id!: number;      
+  descricao?: string;
+  user_id!: number;
 }
