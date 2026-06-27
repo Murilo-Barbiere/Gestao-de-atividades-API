@@ -1,13 +1,22 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserDto } from './dto/user.dto';
 import { AuthRegiterRequestDto } from 'src/auth/dto/request/auth.register.request.dto';
+import { UserUpdataDto } from './dto/user.update.dto';
+export const jwtConstants = {
+  secret: process.env.SALT_ROUNDS,
+};
+
+import bcrypt from 'bcrypt';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
-    constructor(private prismaService: PrismaService){}
+    constructor(private prismaService: PrismaService, private readonly configService: ConfigService){}
 
-    async retornaUserAuthId(id: number, idUserLogado: number): Promise<UserDto>{
+    async retornaUserAuthId(id: number, idAuthUser: number): Promise<UserDto>{
+        if(id != idAuthUser) throw new UnauthorizedException();
+
         const userDto: UserDto = await this.prismaService.user.findUniqueOrThrow({
             where: {
                 id,
@@ -19,7 +28,6 @@ export class UsersService {
             },
         });
 
-        if(!(id == idUserLogado)) throw new UnauthorizedException();
 
         return userDto;
     }
@@ -36,6 +44,28 @@ export class UsersService {
                 name: true,
                 email: true,
             },
+        });
+    }
+
+    async upDate(idUserUpData: number, idAuthUser: number, userUpdateDto: UserUpdataDto): Promise<UserDto>{
+        if(idUserUpData != idAuthUser) throw new UnauthorizedException();
+
+        const saltos = Number(this.configService.getOrThrow<number>("SALT_ROUNDS"));
+        const senhaNew: string = await bcrypt.hash(userUpdateDto.senha, saltos);
+
+
+        return await this.prismaService.user.update({
+            where: { id: idUserUpData },
+            data: {
+                name: userUpdateDto.name,
+                email: userUpdateDto.email,
+                senha: senhaNew
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+            }
         });
     }
 
