@@ -1,10 +1,11 @@
 import { UserEntity } from "../entity/user.entity";
-import { UserCreateData } from "./data/user.create.data";
+import { UserCreateDto } from "../dto/user.create.dto";
+import { UserUpdataDto } from "../dto/user.update.dto";
 
-export interface IUserRepository{
-    findById(id: number): Promise<UserEntity>;
-    findByEmail(email: string): Promise<UserEntity | null>;
-    create(data: UserCreateData): Promise<UserEntity>;
-    update(id: number, data: UserCreateData): Promise<UserEntity>;
-    delete(id: number): Promise<void>;    
+export abstract class IUserRepository{
+    abstract findById(id: number): Promise<UserEntity>;
+    abstract findByEmail(email: string): Promise<UserEntity | null>;
+    abstract create(data: UserCreateDto): Promise<UserEntity>;
+    abstract update(id: number, data: UserUpdataDto): Promise<UserEntity>;
+    abstract delete(id: number): Promise<void>;    
 }

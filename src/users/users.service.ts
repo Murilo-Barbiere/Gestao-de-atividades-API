@@ -6,27 +6,26 @@ export const jwtConstants = {
 import bcrypt from 'bcrypt';
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UserDto } from './dto/user.dto';
+import { UserResponseDto } from './dto/user.response.dto';
 import { UserUpdataDto } from './dto/user.update.dto';
-import { UserRepository } from './repository/user.repository';
 import { UserEntity } from './entity/user.entity';
+import { IUserRepository } from './repository/iuser.repository';
 
 @Injectable()
 export class UsersService {
-    constructor(private userRepostory: UserRepository, private readonly configService: ConfigService){}
+    constructor(private userRepostory: IUserRepository, private readonly configService: ConfigService){}
 
-    async retornUserEmail(email: string): Promise<UserEntity | null> {                                                        
-        console.log("2.1");                                                                                                   
+    async retornUserEmail(email: string): Promise<UserEntity | null> {                                                                                                                                                         
         return this.userRepostory.findByEmail(email);                                                                         
     }
 
-    async retornaUserAuthId(id: number, idAuthUser: number): Promise<UserDto>{
+    async retornaUserAuthId(id: number, idAuthUser: number): Promise<UserResponseDto>{
         if(id != idAuthUser) throw new UnauthorizedException();
 
         return await this.userRepostory.findById(id);
     }
 
-    async saveUser(userDto: AuthRegiterRequestDto, senhaHash: string): Promise<UserDto>{
+    async saveUser(userDto: AuthRegiterRequestDto, senhaHash: string): Promise<UserResponseDto>{
         return await this.userRepostory.create({
             name: userDto.name,
             email: userDto.email,
@@ -34,7 +33,7 @@ export class UsersService {
         });
     }
 
-    async upDateId(idUserUpData: number, idAuthUser: number, userUpdateDto: UserUpdataDto): Promise<UserDto>{
+    async upDateId(idUserUpData: number, idAuthUser: number, userUpdateDto: UserUpdataDto): Promise<UserResponseDto>{
         if(idUserUpData != idAuthUser) throw new UnauthorizedException();
 
         const saltos = Number(this.configService.getOrThrow<number>("SALT_ROUNDS"));

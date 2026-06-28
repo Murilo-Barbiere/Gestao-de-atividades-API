@@ -20,14 +20,10 @@ export class AuthService {
   ) {}
 
   async register(authRegiterRequestDto: AuthRegiterRequestDto): Promise<AuthRegiterResponseDto> {
-    console.log("2");
     const userFlag = await this.usersService.retornUserEmail(authRegiterRequestDto.email);
-    console.log("3");
-
     if (userFlag) throw new ConflictException('Dados invalidos');
 
     const senhaHash = await bcrypt.hash(authRegiterRequestDto.senha, 10);
-    console.log("4");
     
     return this.usersService.saveUser(authRegiterRequestDto, senhaHash)
   }

@@ -1,4 +1,4 @@
-export class UserCreateData{
+export class UserCreateDto{
     name!: string;
     email!: string;
     senha!: string;

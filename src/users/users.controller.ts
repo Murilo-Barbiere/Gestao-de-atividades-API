@@ -3,7 +3,7 @@ import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Put, Reques
 import type { RequestWithUser } from "../auth/interfaces/request-with-user.interface";
 import { UsersService } from './users.service';
 import { UserUpdataDto } from './dto/user.update.dto';
-import { UserDto } from './dto/user.dto';
+import { UserResponseDto } from './dto/user.response.dto';
 
 @Controller('user')
 export class UsersController {
@@ -12,7 +12,7 @@ export class UsersController {
     //post de usuario em auth registro
 
     @Get(":id")
-    async aretornaUserId(@Param("id") id: number, @Request() req: RequestWithUser): Promise<UserDto>{
+    async aretornaUserId(@Param("id") id: number, @Request() req: RequestWithUser): Promise<UserResponseDto>{
         return await this.usersService.retornaUserAuthId(id, req.user.id);
     }
     
@@ -21,7 +21,7 @@ export class UsersController {
         @Param("id") idUserUpData: number,  
         @Request() req: RequestWithUser, 
         @Body() userUpdateDto: UserUpdataDto)
-    :Promise<UserDto>{
+    :Promise<UserResponseDto>{
         return await this.usersService.upDateId(idUserUpData, req.user.id, userUpdateDto);
     }
 

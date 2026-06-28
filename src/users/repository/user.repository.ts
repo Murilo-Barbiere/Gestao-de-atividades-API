@@ -3,7 +3,8 @@ import { IUserRepository } from "./iuser.repository";
 import { PrismaService } from "src/prisma/prisma.service";
 import { user } from "generated/prisma/client"
 import { Injectable } from "@nestjs/common";
-import { UserCreateData } from "./data/user.create.data";
+import { UserCreateDto } from "../dto/user.create.dto";
+import { UserUpdataDto } from "../dto/user.update.dto";
 
 @Injectable()
 export class UserRepository implements IUserRepository{
@@ -15,23 +16,20 @@ export class UserRepository implements IUserRepository{
         return this.toEntity(user);
     }
     
-   async findByEmail(email: string): Promise<UserEntity | null> {                                                            
-        console.log("2.2");                                                                                                   
-        const user = await this.prismaService.user.findUnique({where: {email}});                                              
-        console.log("2.3");                                                                                                   
-                                                                                                                              
-        if (!user) return null;  // retorna null, não joga erro                                                               
+   async findByEmail(email: string): Promise<UserEntity | null> {                                                                                                                                                              
+        const user = await this.prismaService.user.findUnique({where: {email}});                                                                                                                                                                                                                                              
+        if (!user) return null;                                                         
                                                                                                                               
         return this.toEntity(user);                                                                                           
     }
 
-    async create(data: UserCreateData): Promise<UserEntity> {
+    async create(data: UserCreateDto): Promise<UserEntity> {
         const user: user = await this.prismaService.user.create({data: data});
 
         return this.toEntity(user);
     }
 
-    async update(id: number, data: UserCreateData): Promise<UserEntity> {
+    async update(id: number, data: UserUpdataDto): Promise<UserEntity> {
         const user: user = await this.prismaService.user.update({
             where: { id: id},
             data: data
