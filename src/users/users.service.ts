@@ -1,7 +1,4 @@
-import { PrismaService } from 'src/prisma/prisma.service';
-import { UserDto } from './dto/user.dto';
 import { AuthRegiterRequestDto } from 'src/auth/dto/request/auth.register.request.dto';
-import { UserUpdataDto } from './dto/user.update.dto';
 export const jwtConstants = {
   secret: process.env.SALT_ROUNDS,
 };
@@ -9,41 +6,31 @@ export const jwtConstants = {
 import bcrypt from 'bcrypt';
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { UserDto } from './dto/user.dto';
+import { UserUpdataDto } from './dto/user.update.dto';
+import { UserRepository } from './repository/user.repository';
+import { UserEntity } from './entity/user.entity';
 
 @Injectable()
 export class UsersService {
-    constructor(private prismaService: PrismaService, private readonly configService: ConfigService){}
+    constructor(private userRepostory: UserRepository, private readonly configService: ConfigService){}
+
+    async retornUserEmail(email: string): Promise<UserEntity | null> {                                                        
+        console.log("2.1");                                                                                                   
+        return this.userRepostory.findByEmail(email);                                                                         
+    }
 
     async retornaUserAuthId(id: number, idAuthUser: number): Promise<UserDto>{
         if(id != idAuthUser) throw new UnauthorizedException();
 
-        const userDto: UserDto = await this.prismaService.user.findUniqueOrThrow({
-            where: {
-                id,
-            },
-            select:{
-                id: true,
-                name: true,
-                email: true,
-            },
-        });
-
-
-        return userDto;
+        return await this.userRepostory.findById(id);
     }
 
     async saveUser(userDto: AuthRegiterRequestDto, senhaHash: string): Promise<UserDto>{
-        return await this.prismaService.user.create({
-            data:{
-                name: userDto.name,
-                email: userDto.email,
-                senha: senhaHash,
-            },
-            select: {
-                id: true,
-                name: true,
-                email: true,
-            },
+        return await this.userRepostory.create({
+            name: userDto.name,
+            email: userDto.email,
+            senha: senhaHash
         });
     }
 
@@ -53,19 +40,10 @@ export class UsersService {
         const saltos = Number(this.configService.getOrThrow<number>("SALT_ROUNDS"));
         const senhaNew: string = await bcrypt.hash(userUpdateDto.senha, saltos);
 
-
-        return await this.prismaService.user.update({
-            where: { id: idUserUpData },
-            data: {
-                name: userUpdateDto.name,
-                email: userUpdateDto.email,
-                senha: senhaNew
-            },
-            select: {
-                id: true,
-                name: true,
-                email: true,
-            }
+        return await this.userRepostory.update(idUserUpData, {
+            name: userUpdateDto.name,
+            email: userUpdateDto.email,
+            senha: senhaNew
         });
     }
 
@@ -73,9 +51,7 @@ export class UsersService {
         if( idUserDelete != idAuthUser) throw new UnauthorizedException();
 
         try{
-            await this.prismaService.user.delete({
-                where:{ id: idUserDelete }
-            });
+            await this.userRepostory.delete(idUserDelete);
         }
         catch{
             throw new NotFoundException("Usuário não encontrado");

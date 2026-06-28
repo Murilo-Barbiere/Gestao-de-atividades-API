@@ -15,6 +15,7 @@ export class AuthController {
   async register(
     @Body() authRegiterRequestDto: AuthRegiterRequestDto,
   ): Promise<AuthRegiterResponseDto> {
+    console.log("1");
     return await this.authService.register(authRegiterRequestDto);
   }
 

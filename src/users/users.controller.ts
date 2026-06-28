@@ -2,8 +2,8 @@ import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Put, Reques
 
 import type { RequestWithUser } from "../auth/interfaces/request-with-user.interface";
 import { UsersService } from './users.service';
-import { UserDto } from './dto/user.dto';
 import { UserUpdataDto } from './dto/user.update.dto';
+import { UserDto } from './dto/user.dto';
 
 @Controller('user')
 export class UsersController {
