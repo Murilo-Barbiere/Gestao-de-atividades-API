@@ -7,7 +7,7 @@ export const jwtConstants = {
 };
 
 import bcrypt from 'bcrypt';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -47,7 +47,7 @@ export class UsersService {
         });
     }
 
-    async upDate(idUserUpData: number, idAuthUser: number, userUpdateDto: UserUpdataDto): Promise<UserDto>{
+    async upDateId(idUserUpData: number, idAuthUser: number, userUpdateDto: UserUpdataDto): Promise<UserDto>{
         if(idUserUpData != idAuthUser) throw new UnauthorizedException();
 
         const saltos = Number(this.configService.getOrThrow<number>("SALT_ROUNDS"));
@@ -67,6 +67,19 @@ export class UsersService {
                 email: true,
             }
         });
+    }
+
+    async deleteUserById(idUserDelete: number, idAuthUser: number): Promise<void>{
+        if( idUserDelete != idAuthUser) throw new UnauthorizedException();
+
+        try{
+            await this.prismaService.user.delete({
+                where:{ id: idUserDelete }
+            });
+        }
+        catch{
+            throw new NotFoundException("Usuário não encontrado");
+        }
     }
 
 }
