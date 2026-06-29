@@ -25,7 +25,13 @@ export class AuthService {
 
     const senhaHash = await bcrypt.hash(authRegiterRequestDto.senha, 10);
     
-    return this.usersService.saveUser(authRegiterRequestDto, senhaHash)
+    const usuarioCriado = await this.usersService.saveUser(authRegiterRequestDto, senhaHash);
+
+    return {
+        id: usuarioCriado.id,
+        name: usuarioCriado.name,
+        email: usuarioCriado.email
+    };
   }
 
   async login(authLoginResquestDto: AuthLoginRequestDto): Promise<AuthLoginResponseDto> {
