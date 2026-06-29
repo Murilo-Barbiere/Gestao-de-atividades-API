@@ -1,9 +1,11 @@
-import { IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class TarefaUpdataDto {
     @IsString()
+    @IsOptional()
     titulo!: string;
 
-    @IsString()
+    @IsBoolean()
+    @IsOptional()
     realizada!: boolean;
 }

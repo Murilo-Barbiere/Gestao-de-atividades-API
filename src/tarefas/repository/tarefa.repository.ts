@@ -17,12 +17,14 @@ export class TarefaRepository implements ITarefaRepository {
         return this.toEntity(taref);
     }
 
-    async findByListaId(id: number): Promise<TarefaEntity> {
-        const taref: tarefa = await this.prismaService.tarefa.findFirstOrThrow({
+    async findByListaId(id: number): Promise<TarefaEntity[]> {
+        const tarefas: tarefa[] = await this.prismaService.tarefa.findMany({
             where: { lista_id: id }
         });
-        return this.toEntity(taref);
+
+        return tarefas.map(tarefa => this.toEntity(tarefa));
     }
+
 
     async create(data: TarefaCreateDto, idLista: number): Promise<TarefaEntity> {
         const taref: tarefa = await this.prismaService.tarefa.create({

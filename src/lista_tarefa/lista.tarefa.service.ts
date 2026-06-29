@@ -17,7 +17,7 @@ export class ListaTarefaService {
     });
   }
 
-  async retornePorId(idlista: number, idUserAuth: number){
+  async retornePorId(idlista: number, idUserAuth: number): Promise<ResponseListaTarefaDto>{
     const lista: ListaTarefaEntity = await this.listaTarefaRepository.findById(idlista);
 
     if(lista.userId != idUserAuth) throw new UnauthorizedException();
