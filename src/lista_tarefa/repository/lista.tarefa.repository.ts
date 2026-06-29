@@ -23,18 +23,17 @@ export class ListaTarefaRepository implements IListaTarefaRepository {
         const listas: lista_tarefa[] = await this.prismaService.lista_tarefa.findMany({
             where: {user_id: idUser}
         });
-
         return listas.map(lista => this.toEntity(lista));
     }
-
+    
     async create(data: CreateListaTarefaRepositoryDto): Promise<ListaTarefaEntity> {
         const lista: lista_tarefa = await this.prismaService.lista_tarefa.create({
             data: data
         });
-
+        
         return this.toEntity(lista);
     }
-
+    
     async update(id: number, data: UpdateListaTarefaDto): Promise<ListaTarefaEntity> {
         const lista: lista_tarefa = await this.prismaService.lista_tarefa.update({
             where: { id },
