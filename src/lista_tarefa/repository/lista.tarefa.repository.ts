@@ -1,13 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { lista_tarefa } from "generated/prisma/client";
-import { CreateListaTarefaDto } from "../dto/create.lista.tarefa.dto";
 import { UpdateListaTarefaDto } from "../dto/update.lista.tarefa.dto";
 import { ListaTarefaEntity } from "../entity/lista.tarefa.entity";
-import { Ilista_tarefa } from "./ilista.tarefas.repository";
+import { IListaTarefaRepository } from "./ilista.tarefas.repository";
+import { CreateListaTarefaRepositoryDto } from "../dto/create.lista.tarefa.repository.dto";
 
 @Injectable()
-export class ListaTarefaRepository implements Ilista_tarefa {
+export class ListaTarefaRepository implements IListaTarefaRepository {
     constructor(private readonly prismaService: PrismaService) {}
 
     async findById(id: number): Promise<ListaTarefaEntity> {
@@ -19,7 +19,7 @@ export class ListaTarefaRepository implements Ilista_tarefa {
 
     }
 
-    async create(data: CreateListaTarefaDto): Promise<ListaTarefaEntity> {
+    async create(data: CreateListaTarefaRepositoryDto): Promise<ListaTarefaEntity> {
         const lista: lista_tarefa = await this.prismaService.lista_tarefa.create({
             data: data
         });
@@ -45,7 +45,8 @@ export class ListaTarefaRepository implements Ilista_tarefa {
     private toEntity(lista: lista_tarefa): ListaTarefaEntity {
         return new ListaTarefaEntity(
             lista.id,
-            lista.nome
+            lista.nome,
+            lista.user_id,
         );
     }
 }

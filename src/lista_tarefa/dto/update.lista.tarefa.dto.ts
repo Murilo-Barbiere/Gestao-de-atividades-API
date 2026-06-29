@@ -1,4 +1,8 @@
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+
 export class UpdateListaTarefaDto {
-    nome!: string;
-    user_id!: number;
+    @IsOptional()
+    @IsNotEmpty()
+    @IsString()
+    nome?: string;
 }
