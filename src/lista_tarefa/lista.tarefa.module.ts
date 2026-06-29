@@ -13,5 +13,6 @@ import { IListaTarefaRepository } from './repository/ilista.tarefas.repository';
       useClass: ListaTarefaRepository,
     },
   ],
+  exports: [ListaTarefaService],
 })
 export class ListaTarefaModule {}
