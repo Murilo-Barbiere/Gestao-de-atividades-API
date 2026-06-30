@@ -1,7 +1,7 @@
 import { ITarefaRepository } from './repository/itarefa.repository';
 import { TarefaCreateDto } from './dto/tarefa.create.dto';
 import { TarefaResponseDto } from './dto/tarefa.response.dto';
-import { ListaTarefaService } from 'src/lista_tarefa/lista.tarefa.service';
+import { ListaTarefaService } from '../lista_tarefa/lista.tarefa.service';
 import { Injectable} from '@nestjs/common';
 import { TarefaEntity } from './entity/tarefa.entity';
 import { TarefaUpdataDto } from './dto/tarefa.update.dto';

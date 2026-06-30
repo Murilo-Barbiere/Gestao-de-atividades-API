@@ -9,7 +9,7 @@ import {
 import { AuthRegiterRequestDto } from './dto/request/auth.register.request.dto';
 import { AuthLoginRequestDto } from './dto/request/auth.login.request.dto';
 import { AuthLoginResponseDto } from './dto/response/auth.login.response.dto';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 import { AuthRegiterResponseDto } from './dto/response/auth.register.response.dto';
 
 @Injectable()
