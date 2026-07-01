@@ -3,7 +3,7 @@ import { TarefasService } from './tarefas.service';
 import { TarefasController } from './tarefas.controller';
 import { ITarefaRepository } from './repository/itarefa.repository';
 import { TarefaRepository } from './repository/tarefa.repository';
-import { ListaTarefaModule } from '../lista_tarefa/lista.tarefa.module';
+import { ListaTarefaModule } from '../lista_tarefa/lista_tarefa.module';
 
 @Module({
   imports: [ListaTarefaModule],

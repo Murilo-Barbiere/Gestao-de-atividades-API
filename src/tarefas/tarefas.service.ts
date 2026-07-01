@@ -1,7 +1,7 @@
 import { ITarefaRepository } from './repository/itarefa.repository';
 import { TarefaCreateDto } from './dto/tarefa.create.dto';
 import { TarefaResponseDto } from './dto/tarefa.response.dto';
-import { ListaTarefaService } from '../lista_tarefa/lista.tarefa.service';
+import { ListaTarefaService } from '../lista_tarefa/lista_tarefa.service';
 import { Injectable} from '@nestjs/common';
 import { TarefaEntity } from './entity/tarefa.entity';
 import { TarefaUpdataDto } from './dto/tarefa.update.dto';
@@ -10,9 +10,8 @@ import { TarefaUpdataDto } from './dto/tarefa.update.dto';
 export class TarefasService {
     constructor(private tarefaRepository: ITarefaRepository, private listaTarefaService: ListaTarefaService){}
 
-    async create(idUserAuth: number, idLista: number, tarefaCreateDto: TarefaCreateDto): Promise<TarefaResponseDto>{
+    async create(idUserAuth: number, tarefaCreateDto: TarefaCreateDto, idLista: number): Promise<TarefaResponseDto>{
         await this.listaTarefaService.retornePorId(idLista, idUserAuth);
-
         return await this.tarefaRepository.create(tarefaCreateDto, idLista);
     }
 

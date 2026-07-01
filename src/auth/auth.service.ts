@@ -6,11 +6,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
-import { AuthRegiterRequestDto } from './dto/request/auth.register.request.dto';
+import { AuthRegisterRequestDto } from './dto/request/auth.register.request.dto';
 import { AuthLoginRequestDto } from './dto/request/auth.login.request.dto';
 import { AuthLoginResponseDto } from './dto/response/auth.login.response.dto';
 import { UsersService } from '../users/users.service';
-import { AuthRegiterResponseDto } from './dto/response/auth.register.response.dto';
+import { AuthRegisterResponseDto } from './dto/response/auth.register.response.dto';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +19,7 @@ export class AuthService {
     private usersService: UsersService,
   ) {}
 
-  async register(authRegiterRequestDto: AuthRegiterRequestDto): Promise<AuthRegiterResponseDto> {
+  async register(authRegiterRequestDto: AuthRegisterRequestDto): Promise<AuthRegisterResponseDto> {
     const userFlag = await this.usersService.retornUserEmail(authRegiterRequestDto.email);
     if (userFlag) throw new ConflictException('Dados invalidos');
 

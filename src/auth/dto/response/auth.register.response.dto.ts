@@ -1,4 +1,4 @@
-export class AuthRegiterResponseDto {
+export class AuthRegisterResponseDto {
   id!: number;
   name!: string;
   email!: string;

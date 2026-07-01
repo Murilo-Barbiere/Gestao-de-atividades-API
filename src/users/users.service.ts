@@ -1,4 +1,4 @@
-import { AuthRegiterRequestDto } from 'src/auth/dto/request/auth.register.request.dto';
+import { AuthRegisterRequestDto } from 'src/auth/dto/request/auth.register.request.dto';
 export const jwtConstants = {
   secret: process.env.SALT_ROUNDS,
 };
@@ -25,7 +25,7 @@ export class UsersService {
         return await this.userRepostory.findById(id);
     }
 
-    async saveUser(userDto: AuthRegiterRequestDto, senhaHash: string): Promise<UserResponseDto>{
+    async saveUser(userDto: AuthRegisterRequestDto, senhaHash: string): Promise<UserResponseDto>{
         return await this.userRepostory.create({
             name: userDto.name,
             email: userDto.email,

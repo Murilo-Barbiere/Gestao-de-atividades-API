@@ -3,7 +3,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
-import { ListaTarefaModule } from './lista_tarefa/lista.tarefa.module';
+import { ListaTarefaModule } from './lista_tarefa/lista_tarefa.module';
 import { TarefasModule } from './tarefas/tarefas.module';
 
 @Module({

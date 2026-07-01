@@ -1,5 +1,5 @@
 import { UnauthorizedException } from '@nestjs/common';
-import { ListaTarefaService } from './lista.tarefa.service';
+import { ListaTarefaService } from './lista_tarefa.service';
 
 describe('ListaTarefaService', () => {
   let listaTarefaService: ListaTarefaService;

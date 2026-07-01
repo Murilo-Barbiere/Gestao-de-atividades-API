@@ -26,7 +26,7 @@ describe('TarefasService', () => {
       const tarefaCriada = { id: 1, titulo: 'Estudar', realizada: false, lista_id: 1 };
       mockTarefaRepository.create.mockResolvedValue(tarefaCriada);
 
-      const resultado = await tarefasService.create(10, 1, { titulo: 'Estudar' } as any);
+      const resultado = await tarefasService.create(10, { titulo: 'Estudar' } as any, 1);
 
       expect(mockListaTarefaService.retornePorId).toHaveBeenCalledWith(1, 10);
       expect(mockTarefaRepository.create).toHaveBeenCalled();
@@ -37,7 +37,7 @@ describe('TarefasService', () => {
       mockListaTarefaService.retornePorId.mockRejectedValue(new Error('Não autorizado'));
 
       await expect(
-        tarefasService.create(99, 1, { titulo: 'Estudar' } as any),
+        tarefasService.create(99, { titulo: 'Estudar' } as any, 1),
       ).rejects.toThrow();
 
       expect(mockTarefaRepository.create).not.toHaveBeenCalled();

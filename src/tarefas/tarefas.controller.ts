@@ -1,15 +1,15 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Request } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Patch, Post, Request } from '@nestjs/common';
 import { TarefaResponseDto } from './dto/tarefa.response.dto';
 import type { RequestWithUser } from 'src/auth/interfaces/request-with-user.interface';
 import { TarefasService } from './tarefas.service';
 import { TarefaCreateDto } from './dto/tarefa.create.dto';
 import { TarefaUpdataDto } from './dto/tarefa.update.dto';
 
-@Controller('tarefas')
+@Controller()
 export class TarefasController {
     constructor(private tarefasService: TarefasService){}
 
-    @Get("all/:idLista")
+    @Get("listas-tarefa/:idLista/tarefas")
     async retorneTarefasDaLista(
         @Request() req: RequestWithUser,
         @Param("idLista", ParseIntPipe) idLista: number)
@@ -17,22 +17,22 @@ export class TarefasController {
         return this.tarefasService.retorneTarefasDaLista(req.user.id, idLista);
     }
     
-    @Get("/:idTarefa")
+    @Get("tarefas/:idTarefa")
     async retorneTarefa(@Request() req: RequestWithUser, @Param("idTarefa", ParseIntPipe) idTarefa: number)
     : Promise<TarefaResponseDto>{
         return this.tarefasService.retornePorId(req.user.id, idTarefa);
     }
 
-    @Post(":idLista")
+    @Post("listas-tarefa/:idLista/tarefas")
     async criarTarefa(
-        @Request() req: RequestWithUser, 
+        @Request() req: RequestWithUser,
         @Body() tarefaCreateDto: TarefaCreateDto,
-        @Param("idLista") idLista: number
-    ): Promise<TarefaResponseDto>{
-        return this.tarefasService.create(req.user.id, idLista, tarefaCreateDto);
+        @Param("idLista", ParseIntPipe) idLista: number)
+    : Promise<TarefaResponseDto>{
+        return this.tarefasService.create(req.user.id, tarefaCreateDto, idLista);
     }
 
-    @Patch(":id")
+    @Patch("tarefas/:id")
     async atualizarTarefa(
         @Request() req: RequestWithUser,
         @Param("id", ParseIntPipe) id: number,
@@ -41,7 +41,8 @@ export class TarefasController {
         return this.tarefasService.update(req.user.id, id, tarefaUpdataDto);
     }
 
-    @Delete(":id")
+    @Delete("tarefas/:id")
+    @HttpCode(HttpStatus.NO_CONTENT)
     async removerTarefa(
         @Request() req: RequestWithUser,
         @Param("id", ParseIntPipe) id: number,

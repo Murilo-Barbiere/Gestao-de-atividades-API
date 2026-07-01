@@ -1,10 +1,11 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
-import { AuthRegiterRequestDto } from './dto/request/auth.register.request.dto';
-import { AuthRegiterResponseDto } from './dto/response/auth.register.response.dto';
+import { AuthRegisterRequestDto } from './dto/request/auth.register.request.dto';
+import { AuthRegisterResponseDto } from './dto/response/auth.register.response.dto';
 import { AuthLoginRequestDto } from './dto/request/auth.login.request.dto';
 import { PublicRoute } from './decorators/auth.public.decorator';
+import { AuthLoginResponseDto } from './dto/response/auth.login.response.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -13,14 +14,14 @@ export class AuthController {
   @PublicRoute()
   @Post('register')
   async register(
-    @Body() authRegiterRequestDto: AuthRegiterRequestDto,
-  ): Promise<AuthRegiterResponseDto> {
+    @Body() authRegiterRequestDto: AuthRegisterRequestDto): Promise<AuthRegisterResponseDto> {
     return await this.authService.register(authRegiterRequestDto);
   }
 
   @PublicRoute()
   @Post('login')
-  async login(@Body() authLoginRequestDto: AuthLoginRequestDto) {
+  @HttpCode(HttpStatus.OK)
+  async login(@Body() authLoginRequestDto: AuthLoginRequestDto): Promise<AuthLoginResponseDto> {
     return await this.authService.login(authLoginRequestDto);
   }
 }

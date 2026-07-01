@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
-export class AuthRegiterRequestDto {
+export class AuthRegisterRequestDto {
   @IsString()
   @IsNotEmpty()
   readonly name!: string;
