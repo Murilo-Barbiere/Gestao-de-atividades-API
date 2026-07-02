@@ -6,6 +6,7 @@ import { TarefaUpdataDto } from "../dto/tarefa.update.dto";
 import { TarefaEntity } from "../entity/tarefa.entity";
 import { ITarefaRepository } from "./itarefa.repository";
 import { PrioridadeTarefa } from "src/common/enums/prioridade_Tarefa.enum";
+import { TarefaQueryParams } from "./tarefa-query.params";
 
 @Injectable()
 export class TarefaRepository implements ITarefaRepository {
@@ -18,9 +19,10 @@ export class TarefaRepository implements ITarefaRepository {
         return this.toEntity(taref);
     }
 
-    async findByListaId(id: number): Promise<TarefaEntity[]> {
+    async findByListaId(params: TarefaQueryParams): Promise<TarefaEntity[]> {
         const tarefas: tarefa[] = await this.prismaService.tarefa.findMany({
-            where: { lista_id: id }
+            where: params.where,
+            orderBy: params.orderBy
         });
 
         return tarefas.map(tarefa => this.toEntity(tarefa));

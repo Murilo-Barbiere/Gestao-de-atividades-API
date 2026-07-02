@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Patch, Post, Request } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Patch, Post, Query, Request } from '@nestjs/common';
 import { TarefaResponseDto } from './dto/tarefa.response.dto';
 import type { RequestWithUser } from 'src/auth/interfaces/request-with-user.interface';
 import { TarefasService } from './tarefas.service';
 import { TarefaCreateDto } from './dto/tarefa.create.dto';
 import { TarefaUpdataDto } from './dto/tarefa.update.dto';
+import { BuscarTarefasQueryDto } from './dto/buscar_tarefas_query.dto';
 
 @Controller()
 export class TarefasController {
@@ -12,9 +13,11 @@ export class TarefasController {
     @Get("listas-tarefa/:idLista/tarefas")
     async retorneTarefasDaLista(
         @Request() req: RequestWithUser,
-        @Param("idLista", ParseIntPipe) idLista: number)
+        @Param("idLista", ParseIntPipe) idLista: number,
+        @Query() query: BuscarTarefasQueryDto
+    )
     : Promise<TarefaResponseDto[]>{
-        return this.tarefasService.retorneTarefasDaLista(req.user.id, idLista);
+        return this.tarefasService.retorneTarefasDaLista(req.user.id, idLista, query);
     }
     
     @Get("tarefas/:idTarefa")

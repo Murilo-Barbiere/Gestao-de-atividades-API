@@ -5,6 +5,10 @@ import { ListaTarefaService } from '../lista_tarefa/lista_tarefa.service';
 import { Injectable} from '@nestjs/common';
 import { TarefaEntity } from './entity/tarefa.entity';
 import { TarefaUpdataDto } from './dto/tarefa.update.dto';
+import { BuscarTarefasQueryDto } from './dto/buscar_tarefas_query.dto';
+import { StatusFiltro } from 'src/common/enums/status_filtro.enum';
+import { Prisma } from 'generated/prisma/client';
+import { TarefaOrdenacao } from 'src/common/enums/tarefa_ordenacao.enum';
 
 @Injectable()
 export class TarefasService {
@@ -17,12 +21,15 @@ export class TarefasService {
 
     async retorneTarefasDaLista(
         idUserAuth: number,
-        idLista: number
+        idLista: number,
+        query: BuscarTarefasQueryDto
     ): Promise<TarefaResponseDto[]>{
         await this.listaTarefaService.retornePorId(idLista, idUserAuth);
 
-        const tarefas = await this.tarefaRepository.findByListaId(idLista);
+        const where = this.whereFiltro(idLista, query);
+        const orderBy = this.OrderByFiltro(query);
 
+        const tarefas = await this.tarefaRepository.findByListaId({ where, orderBy });
         return tarefas.map(tarefa => this.toResponseDto(tarefa));
     }
 
@@ -52,6 +59,41 @@ export class TarefasService {
         return tarefa;
     }
 
+    private whereFiltro(idLista: number, query: BuscarTarefasQueryDto): Prisma.tarefaWhereInput{
+        const where: Prisma.tarefaWhereInput = { lista_id: idLista };
+
+        switch (query.status) {
+            case StatusFiltro.PENDENTE:
+                where.realizada = false;
+                break;
+            case StatusFiltro.CONCLUIDA:
+                where.realizada = true;
+                break;
+            case StatusFiltro.VENCIDA:
+                where.realizada = false;
+                where.data_vencimento = { lt: new Date() };
+                break;
+        }
+
+        if (query.prioridade) where.prioridade = query.prioridade;
+        return where;
+    }
+
+    private OrderByFiltro(query: BuscarTarefasQueryDto): Prisma.tarefaOrderByWithRelationInput | undefined {
+        if (!query.sort) return undefined;
+
+        const direction = query.order ?? "asc";
+
+        const sortMap: Record<TarefaOrdenacao, Prisma.tarefaOrderByWithRelationInput> = {
+            [TarefaOrdenacao.PRIORIDADE]: { prioridade: direction },
+            [TarefaOrdenacao.DATA_CRIACAO]: { id: direction },
+            [TarefaOrdenacao.DATA_VENCIMENTO]: { data_vencimento: direction },
+            [TarefaOrdenacao.TITULO]: { titulo: direction },
+        };
+
+        return sortMap[query.sort];
+    }
+
     private toResponseDto(tarefa: TarefaEntity): TarefaResponseDto {
         return {
             id: tarefa.id,
@@ -59,7 +101,9 @@ export class TarefasService {
             realizada: tarefa.realizada,
             lista_id: tarefa.lista_id,
             data_vencimento: tarefa.data_vencimento,
+            prioridade: tarefa.prioridade,
             vencido: tarefa.vencido
         };
     }
+    
 }
