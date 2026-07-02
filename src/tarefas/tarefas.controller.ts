@@ -23,13 +23,12 @@ export class TarefasController {
         return this.tarefasService.retornePorId(req.user.id, idTarefa);
     }
 
-    @Post("listas-tarefa/:idLista/tarefas")
+    @Post("/tarefas")
     async criarTarefa(
         @Request() req: RequestWithUser,
-        @Body() tarefaCreateDto: TarefaCreateDto,
-        @Param("idLista", ParseIntPipe) idLista: number)
+        @Body() tarefaCreateDto: TarefaCreateDto)
     : Promise<TarefaResponseDto>{
-        return this.tarefasService.create(req.user.id, tarefaCreateDto, idLista);
+        return this.tarefasService.create(req.user.id, tarefaCreateDto);
     }
 
     @Patch("tarefas/:id")

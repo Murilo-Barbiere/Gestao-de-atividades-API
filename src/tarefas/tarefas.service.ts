@@ -10,9 +10,9 @@ import { TarefaUpdataDto } from './dto/tarefa.update.dto';
 export class TarefasService {
     constructor(private tarefaRepository: ITarefaRepository, private listaTarefaService: ListaTarefaService){}
 
-    async create(idUserAuth: number, tarefaCreateDto: TarefaCreateDto, idLista: number): Promise<TarefaResponseDto>{
-        await this.listaTarefaService.retornePorId(idLista, idUserAuth);
-        return await this.tarefaRepository.create(tarefaCreateDto, idLista);
+    async create(idUserAuth: number, tarefaCreateDto: TarefaCreateDto): Promise<TarefaResponseDto>{
+        await this.listaTarefaService.retornePorId(tarefaCreateDto.idList, idUserAuth);
+        return await this.tarefaRepository.create(tarefaCreateDto);
     }
 
     async retorneTarefasDaLista(

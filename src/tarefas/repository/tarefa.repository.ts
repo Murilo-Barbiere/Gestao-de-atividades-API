@@ -5,6 +5,7 @@ import { TarefaCreateDto } from "../dto/tarefa.create.dto";
 import { TarefaUpdataDto } from "../dto/tarefa.update.dto";
 import { TarefaEntity } from "../entity/tarefa.entity";
 import { ITarefaRepository } from "./itarefa.repository";
+import { PrioridadeTarefa } from "src/common/enums/prioridade_Tarefa.enum";
 
 @Injectable()
 export class TarefaRepository implements ITarefaRepository {
@@ -26,12 +27,13 @@ export class TarefaRepository implements ITarefaRepository {
     }
 
 
-    async create(data: TarefaCreateDto, idLista: number): Promise<TarefaEntity> {
+    async create(data: TarefaCreateDto): Promise<TarefaEntity> {
         const taref: tarefa = await this.prismaService.tarefa.create({
             data: {
                 titulo: data.titulo,
                 realizada: false,
-                lista_id: idLista
+                prioridade: data.prioridadeTarefa,
+                lista_id: data.idList
             }
         });
         return this.toEntity(taref);
@@ -56,6 +58,7 @@ export class TarefaRepository implements ITarefaRepository {
             taref.id,
             taref.titulo,
             taref.realizada,
+            taref.prioridade as PrioridadeTarefa,
             taref.lista_id
         );
     }

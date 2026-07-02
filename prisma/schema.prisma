@@ -8,12 +8,19 @@ datasource db {
   provider = "postgresql"
 }
 
+enum PrioridadeTarefa {
+  URGENTE
+  ALTA
+  MEDIA
+  BAIXA
+}
+
 model user {
   id Int @id @default(autoincrement())
   name  String
   email String @unique
   senha String
-
+  prioridade PrioridadeTarefa
   tarefas lista_tarefa[]
 }
 
@@ -21,6 +28,7 @@ model tarefa {
   id Int @id @default(autoincrement())
   titulo String
   realizada Boolean
+  prioridade PrioridadeTarefa
 
   lista_id Int
   lista lista_tarefa @relation(fields: [lista_id], references: [id], onDelete: Cascade)
