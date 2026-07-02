@@ -21,7 +21,9 @@ export class TarefasService {
     ): Promise<TarefaResponseDto[]>{
         await this.listaTarefaService.retornePorId(idLista, idUserAuth);
 
-        return await this.tarefaRepository.findByListaId(idLista);
+        const tarefas = await this.tarefaRepository.findByListaId(idLista);
+
+        return tarefas.map(tarefa => this.toResponseDto(tarefa));
     }
 
     async retornePorId(idUserAuth: number, idTarefa: number): Promise<TarefaResponseDto> {
@@ -55,7 +57,9 @@ export class TarefasService {
             id: tarefa.id,
             titulo: tarefa.titulo,
             realizada: tarefa.realizada,
-            lista_id: tarefa.lista_id
+            lista_id: tarefa.lista_id,
+            data_vencimento: tarefa.data_vencimento,
+            vencido: tarefa.vencido
         };
     }
 }

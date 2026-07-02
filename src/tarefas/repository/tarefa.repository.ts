@@ -33,7 +33,8 @@ export class TarefaRepository implements ITarefaRepository {
                 titulo: data.titulo,
                 realizada: false,
                 prioridade: data.prioridadeTarefa,
-                lista_id: data.idList
+                lista_id: data.idList,
+                data_vencimento: data.dataVencimento
             }
         });
         return this.toEntity(taref);
@@ -63,6 +64,7 @@ export class TarefaRepository implements ITarefaRepository {
             taref.titulo,
             taref.realizada,
             taref.prioridade as PrioridadeTarefa,
+            taref.data_vencimento,
             taref.lista_id
         );
     }

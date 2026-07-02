@@ -28,6 +28,7 @@ model tarefa {
   titulo String
   realizada Boolean
   prioridade PrioridadeTarefa
+  data_vencimento DateTime @db.Date
 
   lista_id Int
   lista lista_tarefa @relation(fields: [lista_id], references: [id], onDelete: Cascade)
@@ -41,4 +42,4 @@ model lista_tarefa {
   user user @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   tarefas tarefa[]
-}
+} 
