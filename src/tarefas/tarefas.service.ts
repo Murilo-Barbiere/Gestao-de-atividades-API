@@ -6,11 +6,9 @@ import { Injectable, UnauthorizedException} from '@nestjs/common';
 import { TarefaEntity } from './entity/tarefa.entity';
 import { TarefaUpdataDto } from './dto/tarefa.update.dto';
 import { BuscarTarefasQueryDto } from './dto/buscar_tarefas_query.dto';
-import { StatusFiltro } from 'src/common/enums/status_filtro.enum';
-import { Prisma } from 'generated/prisma/client';
-import { TarefaOrdenacao } from 'src/common/enums/tarefa_ordenacao.enum';
 import { ListaTarefaEntity } from 'src/lista_tarefa/entity/lista.tarefa.entity';
 import { IListaTarefaRepository } from 'src/lista_tarefa/repository/ilista.tarefas.repository';
+import { TarefaFiltro } from './repository/tarefa.filtro';
 
 @Injectable()
 export class TarefasService {
@@ -33,15 +31,22 @@ export class TarefasService {
     ): Promise<TarefaResponseDto[]>{
         await this.listaTarefaService.retornePorId(idLista, idUserAuth);
 
-        const where = this.whereFiltro(idLista, query);
-        const orderBy = this.OrderByFiltro(query);
+            const filtro: TarefaFiltro = {
+                idLista,
+                status: query.status,
+                prioridade: query.prioridade,
+                ordenarPor: query.sort,
+                direcao: query.order ?? 'asc',
+            };  
 
-        const tarefas = await this.tarefaRepository.findByListaId({ where, orderBy });
+        const tarefas = await this.tarefaRepository.findByListaId(filtro);
         return tarefas.map(tarefa => this.toResponseDto(tarefa));
     }
 
     async retornePorId(idUserAuth: number, idTarefa: number): Promise<TarefaResponseDto> {
-        const tarefa = await this.retorneTarefaAutorizada(idTarefa, idUserAuth);
+        const tarefa: TarefaEntity = await this.tarefaRepository.findById(idTarefa);
+        if(! await this.isAuthorized(tarefa.lista_id, idUserAuth)) throw new UnauthorizedException();
+
         return this.toResponseDto(tarefa);
     }
 
@@ -58,50 +63,6 @@ export class TarefasService {
         if(! await this.isAuthorized(tarefa.lista_id, idUserAuth)) throw new UnauthorizedException();
 
         await this.tarefaRepository.delete(idTarefa);
-    }
-
-    private async retorneTarefaAutorizada(idTarefa: number, idUserAuth: number): Promise<TarefaEntity> {
-        const tarefa: TarefaEntity = await this.tarefaRepository.findById(idTarefa);
-        if(! await this.isAuthorized(tarefa.lista_id, idUserAuth)) throw new UnauthorizedException();
-
-        await this.listaTarefaService.retornePorId(tarefa.lista_id, idUserAuth);
-
-        return tarefa;
-    }
-
-    private whereFiltro(idLista: number, query: BuscarTarefasQueryDto): Prisma.tarefaWhereInput{
-        const where: Prisma.tarefaWhereInput = { lista_id: idLista };
-
-        switch (query.status) {
-            case StatusFiltro.PENDENTE:
-                where.realizada = false;
-                break;
-            case StatusFiltro.CONCLUIDA:
-                where.realizada = true;
-                break;
-            case StatusFiltro.VENCIDA:
-                where.realizada = false;
-                where.data_vencimento = { lt: new Date() };
-                break;
-        }
-
-        if (query.prioridade) where.prioridade = query.prioridade;
-        return where;
-    }
-
-    private OrderByFiltro(query: BuscarTarefasQueryDto): Prisma.tarefaOrderByWithRelationInput | undefined {
-        if (!query.sort) return undefined;
-
-        const direction = query.order ?? "asc";
-
-        const sortMap: Record<TarefaOrdenacao, Prisma.tarefaOrderByWithRelationInput> = {
-            [TarefaOrdenacao.PRIORIDADE]: { prioridade: direction },
-            [TarefaOrdenacao.DATA_CRIACAO]: { id: direction },
-            [TarefaOrdenacao.DATA_VENCIMENTO]: { data_vencimento: direction },
-            [TarefaOrdenacao.TITULO]: { titulo: direction },
-        };
-
-        return sortMap[query.sort];
     }
 
     private toResponseDto(tarefa: TarefaEntity): TarefaResponseDto {
