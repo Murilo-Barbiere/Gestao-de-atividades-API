@@ -4,22 +4,31 @@ import { TagsUpdateDto } from "../dto/tags.update.dto";
 import { TagsEntity } from "../entity/tags.entity";
 import { ITagsRepository } from "./itags.repository";
 import { tags } from "generated/prisma/client";
+import { Injectable } from "@nestjs/common";
 
+@Injectable()
 export class TagsRepository implements ITagsRepository {
     constructor(private prismaService: PrismaService){}
-
+    
     async findById(id: number): Promise<TagsEntity> {
         const tag: tags = await this.prismaService.tags.findUniqueOrThrow({where: {id}});
         return this.toEntity(tag);
     }
-
+    
     async findName(name: string): Promise<TagsEntity> {
         const tag: tags = await this.prismaService.tags.findUniqueOrThrow({where: {name}});
         return this.toEntity(tag);
     }
+    
+    async findByuserId(user_id: number): Promise<TagsEntity[]> {
+        const tags: tags[] = await this.prismaService.tags.findMany({where: { user_id, }});
+        return tags.map(tag => this.toEntity(tag));
+    }
 
-    async findMany(name: string): Promise<TagsEntity[]>{
+    async findMany(): Promise<TagsEntity[]>{
+        console.log("1")
         const tags: tags[] = await this.prismaService.tags.findMany();
+        console.log("1")
         return tags.map(tag => this.toEntity(tag));
     }
 
@@ -38,8 +47,7 @@ export class TagsRepository implements ITagsRepository {
         const tag: tags = await this.prismaService.tags.update({
             where:{ id },
             data: {
-                name: data.name,
-                user_id: data.idUserCriador
+                name: data.name
             }
         });
 
