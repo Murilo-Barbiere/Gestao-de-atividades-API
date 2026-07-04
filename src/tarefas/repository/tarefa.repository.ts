@@ -1,12 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { tarefa } from "generated/prisma/client";
+import { Prisma, tarefa } from "generated/prisma/client";
 import { TarefaCreateDto } from "../dto/tarefa.create.dto";
 import { TarefaUpdataDto } from "../dto/tarefa.update.dto";
 import { TarefaEntity } from "../entity/tarefa.entity";
 import { ITarefaRepository } from "./itarefa.repository";
 import { PrioridadeTarefa } from "src/common/enums/prioridade_Tarefa.enum";
-import { TarefaQueryParams } from "./tarefa-query.params";
+import { TarefaFiltro } from "./tarefa.filtro";
+import { StatusFiltro } from "src/common/enums/status_filtro.enum";
+import { TarefaOrdenacao } from "src/common/enums/tarefa_ordenacao.enum";
 
 @Injectable()
 export class TarefaRepository implements ITarefaRepository {
@@ -19,12 +21,11 @@ export class TarefaRepository implements ITarefaRepository {
         return this.toEntity(taref);
     }
 
-    async findByListaId(params: TarefaQueryParams): Promise<TarefaEntity[]> {
-        const tarefas: tarefa[] = await this.prismaService.tarefa.findMany({
-            where: params.where,
-            orderBy: params.orderBy
-        });
+    async findByListaId(filtro: TarefaFiltro): Promise<TarefaEntity[]> {
+        const where = this.montarWhere(filtro);
+        const orderBy = this.montarOrderBy(filtro);
 
+        const tarefas = await this.prismaService.tarefa.findMany({ where, orderBy });
         return tarefas.map(tarefa => this.toEntity(tarefa));
     }
 
@@ -69,5 +70,41 @@ export class TarefaRepository implements ITarefaRepository {
             taref.data_vencimento,
             taref.lista_id
         );
+    }
+
+
+    private montarWhere(filtro: TarefaFiltro): Prisma.tarefaWhereInput {
+    const where: Prisma.tarefaWhereInput = { lista_id: filtro.idLista };
+
+    switch (filtro.status) {
+        case StatusFiltro.PENDENTE:
+            where.realizada = false;
+            break;
+        case StatusFiltro.CONCLUIDA:
+            where.realizada = true;
+            break;
+        case StatusFiltro.VENCIDA:
+            where.realizada = false;
+            where.data_vencimento = { lt: new Date() };
+            break;
+    }
+
+        if (filtro.prioridade) where.prioridade = filtro.prioridade;
+        return where;
+    }
+
+    private montarOrderBy(filtro: TarefaFiltro): Prisma.tarefaOrderByWithRelationInput | undefined {
+        if (!filtro.ordenarPor) return undefined;
+
+        const direction = filtro.direcao ?? 'asc';
+
+        const sortMap: Record<TarefaOrdenacao, Prisma.tarefaOrderByWithRelationInput> = {
+            [TarefaOrdenacao.PRIORIDADE]: { prioridade: direction },
+            [TarefaOrdenacao.DATA_CRIACAO]: { id: direction },
+            [TarefaOrdenacao.DATA_VENCIMENTO]: { data_vencimento: direction },
+            [TarefaOrdenacao.TITULO]: { titulo: direction },
+        };
+
+        return sortMap[filtro.ordenarPor];
     }
 }
