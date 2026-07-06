@@ -10,13 +10,17 @@ import { Injectable } from "@nestjs/common";
 export class TagsRepository implements ITagsRepository {
     constructor(private prismaService: PrismaService){}
     
-    async findById(id: number): Promise<TagsEntity> {
-        const tag: tags = await this.prismaService.tags.findUniqueOrThrow({where: {id}});
+    async findById(id: number): Promise<TagsEntity | null> {
+        const tag: tags | null = await this.prismaService.tags.findUnique({where: {id}});
+
+        if(!tag) return tag;
+
         return this.toEntity(tag);
     }
     
-    async findName(name: string): Promise<TagsEntity> {
-        const tag: tags = await this.prismaService.tags.findUniqueOrThrow({where: {name}});
+    async findName(name: string): Promise<TagsEntity | null> {
+        const tag: tags | null = await this.prismaService.tags.findUnique({where: {name}});
+        if(!tag) return tag;
         return this.toEntity(tag);
     }
     
@@ -32,11 +36,11 @@ export class TagsRepository implements ITagsRepository {
         return tags.map(tag => this.toEntity(tag));
     }
 
-    async create(data: TagsCreateDto): Promise<TagsEntity> {
+    async create(data: TagsCreateDto, id_criador: number): Promise<TagsEntity> {
         const tag: tags = await this.prismaService.tags.create({
             data: {
                 name: data.name,
-                user_id: data.idUserCriador
+                user_id: id_criador
             }
         });
 

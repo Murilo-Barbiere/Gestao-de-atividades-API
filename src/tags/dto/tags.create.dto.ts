@@ -1,11 +1,7 @@
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsString } from "class-validator";
 
 export class TagsCreateDto{
     @IsString()
     @IsNotEmpty()
     name!: string;
-
-    @IsNumber()
-    @IsNotEmpty()
-    idUserCriador!: number;
 }

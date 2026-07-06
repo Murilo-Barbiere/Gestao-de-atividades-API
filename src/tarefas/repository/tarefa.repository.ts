@@ -61,6 +61,25 @@ export class TarefaRepository implements ITarefaRepository {
         });
     }
 
+    async adicionarTag(
+    idTarefa: number,
+    idTag: number,
+    ): Promise<void> {
+
+        await this.prismaService.tarefa.update({
+            where: {
+                id: idTarefa,
+            },
+            data: {
+                tags: {
+                    connect: {
+                        id: idTag,
+                    },
+                },
+            },
+        });
+    }
+
     private toEntity(taref: tarefa): TarefaEntity {
         return new TarefaEntity(
             taref.id,

@@ -27,7 +27,7 @@ export class ListaTarefaController {
     @Param("idLista", ParseIntPipe) idLista: number, 
     @Req() requestUser: RequestWithUser
   ): Promise<ResponseListaTarefaDto>{
-    return await this.listaTarefaService.retornePorId(idLista, requestUser.user.id);
+    return await this.listaTarefaService.retornePorIdAuth(idLista, requestUser.user.id);
   }
   
   @Put(":idLista")

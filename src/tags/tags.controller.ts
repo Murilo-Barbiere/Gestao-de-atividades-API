@@ -10,8 +10,8 @@ export class TagsController {
     constructor(private tagsService: TagsService){}
 
     @Post()
-    async criaTag(@Body() tagsCreateDto: TagsCreateDto){
-        return this.tagsService.criar(tagsCreateDto);
+    async criaTag(@Body() tagsCreateDto: TagsCreateDto, @Request() req: RequestWithUser){
+        return this.tagsService.criar(tagsCreateDto, req.user.id);
     }
 
     @Get()
@@ -20,8 +20,9 @@ export class TagsController {
         return this.tagsService.retornarTodos();
     }
     
+    //arruma isso dps
     @Get(":name")
-    async retornaTagsPorName(@Param("name") name_tag: string): Promise<TagsResponseDto>{
+    async retornaTagsPorName(@Param("name") name_tag: string): Promise<TagsResponseDto| null>{
         return this.tagsService.retornarByName(name_tag);
     }
 

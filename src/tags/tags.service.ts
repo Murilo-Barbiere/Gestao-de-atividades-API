@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ITagsRepository } from './repository/itags.repository';
 import { TagsCreateDto } from './dto/tags.create.dto';
 import { TagsResponseDto } from './dto/tags.response.dto';
@@ -9,16 +9,23 @@ import { TagsEntity } from './entity/tags.entity';
 export class TagsService {
     constructor(private tagsRepository: ITagsRepository){}
 
-    async criar(tagsCreateDto: TagsCreateDto): Promise<TagsResponseDto>{
-        return this.tagsRepository.create(tagsCreateDto);
+    async criar(tagsCreateDto: TagsCreateDto, idUserCriador: number): Promise<TagsResponseDto>{
+        return this.tagsRepository.create(tagsCreateDto, idUserCriador);
     }
 
     async retornarById(id_tag: number): Promise<TagsResponseDto>{
-        return this.tagsRepository.findById(id_tag);
+        const tag: TagsEntity | null = await this.tagsRepository.findById(id_tag);
+        if(!tag) throw new NotFoundException();
+
+        return tag;
     }
 
-    async retornarByName(name: string): Promise<TagsResponseDto>{
-        return this.tagsRepository.findName(name);
+    async retornarByName(name: string): Promise<TagsResponseDto | null>{
+        const tag: TagsEntity | null = await this.tagsRepository.findName(name);
+
+        if(!tag) return null;
+
+        return tag;
     }
     
     async retornarTodos(): Promise<TagsResponseDto[]>{
@@ -31,14 +38,18 @@ export class TagsService {
     }
 
     async update(id_tag: number, id_user: number, tagsUpdateDto: TagsUpdateDto): Promise<TagsResponseDto>{
-        const tag: TagsEntity = await this.tagsRepository.findById(id_tag)
+        const tag: TagsEntity | null = await this.tagsRepository.findById(id_tag);
+        if(!tag) throw new NotFoundException();
+
         if(id_user != tag.idUserCriador) throw new UnauthorizedException();
 
         return this.tagsRepository.update(id_tag, tagsUpdateDto);
     }
 
     async datele(id_tag: number, id_user: number): Promise<void>{
-        const tag = await this.tagsRepository.findById(id_tag)
+        const tag: TagsEntity | null = await this.tagsRepository.findById(id_tag);
+        if(!tag) throw new NotFoundException();
+
         if(id_user != tag.idUserCriador) throw new UnauthorizedException();
         
         this.tagsRepository.delete(id_tag);

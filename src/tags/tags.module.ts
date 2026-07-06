@@ -15,5 +15,6 @@ import { PrismaModule } from 'src/prisma/prisma.module';
       useClass: TagsRepository,                                       
     }
   ],
+  exports: [TagsService],
 })
 export class TagsModule {}

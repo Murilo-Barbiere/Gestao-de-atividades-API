@@ -9,4 +9,5 @@ export abstract class ITarefaRepository{
     abstract create(data: TarefaCreateDto): Promise<TarefaEntity>;
     abstract update(id: number, data: TarefaUpdataDto): Promise<TarefaEntity>;
     abstract delete(id: number): Promise<void>;
+    abstract adicionarTag(idTarefa: number, idTag: number): Promise<void>;
 }

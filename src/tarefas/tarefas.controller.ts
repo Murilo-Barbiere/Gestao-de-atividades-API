@@ -5,6 +5,8 @@ import { TarefasService } from './tarefas.service';
 import { TarefaCreateDto } from './dto/tarefa.create.dto';
 import { TarefaUpdataDto } from './dto/tarefa.update.dto';
 import { BuscarTarefasQueryDto } from './dto/buscar_tarefas_query.dto';
+import { TagsCreateDto } from 'src/tags/dto/tags.create.dto';
+import { TagsResponseDto } from 'src/tags/dto/tags.response.dto';
 
 @Controller()
 export class TarefasController {
@@ -50,5 +52,14 @@ export class TarefasController {
         @Param("id", ParseIntPipe) id: number,
     ): Promise<void> {
         return this.tarefasService.remove(req.user.id, id);
+    }
+
+    @Post("tarefas/:idTarefa/tags")
+    async relacionaTagTarefa(
+        @Request() req: RequestWithUser,
+        @Param("idTarefa", ParseIntPipe) idTarefa: number,
+        @Body() tagsCreateDto: TagsCreateDto
+    ): Promise<TagsResponseDto>{
+        return this.tarefasService.relacionaTagTarefa(idTarefa, req.user.id, tagsCreateDto);
     }
 }
