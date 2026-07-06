@@ -5,6 +5,8 @@ import { TarefaOrdenacao } from 'src/common/enums/tarefa_ordenacao.enum';
 export interface TarefaFiltro {
     idLista: number;
     status?: StatusFiltro;
+    tag?: string;
+
     prioridade?: PrioridadeTarefa;
     ordenarPor?: TarefaOrdenacao;
     direcao?: 'asc' | 'desc';

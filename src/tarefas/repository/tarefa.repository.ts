@@ -6,7 +6,7 @@ import { TarefaUpdataDto } from "../dto/tarefa.update.dto";
 import { TarefaEntity } from "../entity/tarefa.entity";
 import { ITarefaRepository } from "./itarefa.repository";
 import { PrioridadeTarefa } from "src/common/enums/prioridade_Tarefa.enum";
-import { TarefaFiltro } from "./tarefa.filtro";
+import { TarefaFiltro } from "./itarefa.filtro";
 import { StatusFiltro } from "src/common/enums/status_filtro.enum";
 import { TarefaOrdenacao } from "src/common/enums/tarefa_ordenacao.enum";
 
@@ -93,20 +93,26 @@ export class TarefaRepository implements ITarefaRepository {
 
 
     private montarWhere(filtro: TarefaFiltro): Prisma.tarefaWhereInput {
-    const where: Prisma.tarefaWhereInput = { lista_id: filtro.idLista };
+        const where: Prisma.tarefaWhereInput = { lista_id: filtro.idLista };
 
-    switch (filtro.status) {
-        case StatusFiltro.PENDENTE:
-            where.realizada = false;
-            break;
-        case StatusFiltro.CONCLUIDA:
-            where.realizada = true;
-            break;
-        case StatusFiltro.VENCIDA:
-            where.realizada = false;
-            where.data_vencimento = { lt: new Date() };
-            break;
-    }
+        if(filtro.tag) where.tags = {
+            some: {
+                name: filtro.tag 
+            }
+        };
+
+        switch (filtro.status) {
+            case StatusFiltro.PENDENTE:
+                where.realizada = false;
+                break;
+            case StatusFiltro.CONCLUIDA:
+                where.realizada = true;
+                break;
+            case StatusFiltro.VENCIDA:
+                where.realizada = false;
+                where.data_vencimento = { lt: new Date() };
+                break;
+        }
 
         if (filtro.prioridade) where.prioridade = filtro.prioridade;
         return where;

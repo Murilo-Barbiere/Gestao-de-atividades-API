@@ -1,7 +1,7 @@
 import { TarefaCreateDto } from "../dto/tarefa.create.dto";
 import { TarefaUpdataDto } from "../dto/tarefa.update.dto";
 import { TarefaEntity } from "../entity/tarefa.entity";
-import { TarefaFiltro } from "./tarefa.filtro";
+import { TarefaFiltro } from "./itarefa.filtro";
 
 export abstract class ITarefaRepository{
     abstract findById(id: number): Promise<TarefaEntity>;
