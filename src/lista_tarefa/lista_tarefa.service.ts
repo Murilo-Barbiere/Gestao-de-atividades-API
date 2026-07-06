@@ -17,7 +17,7 @@ export class ListaTarefaService {
     });
   }
 
-  async retornePorId(idlista: number, idUserAuth: number): Promise<ResponseListaTarefaDto>{
+  async retornePorIdAuth(idlista: number, idUserAuth: number): Promise<ResponseListaTarefaDto>{
     const lista: ListaTarefaEntity = await this.listaTarefaRepository.findById(idlista);
 
     if(lista.userId != idUserAuth) throw new UnauthorizedException();
@@ -25,10 +25,17 @@ export class ListaTarefaService {
     return await this.listaTarefaRepository.findById(idlista);
   }
 
+  async retornePorId(idlista: number): Promise<ResponseListaTarefaDto>{
+    return await this.listaTarefaRepository.findById(idlista);
+  }
+
   async ListasDeTarefaDoUsuario(idUserAuth: number): Promise<ResponseListaTarefaDto[]> {
     return await this.listaTarefaRepository.findByUsersId(idUserAuth);
   }
   
+  async retornaTodos(): Promise<ResponseListaTarefaDto[]>{
+    return this.listaTarefaRepository.findByMany();
+  }
 
   async update(idUserAuth: number, idLista: number, updateListaTarefaDto: UpdateListaTarefaDto)
   : Promise<ResponseListaTarefaDto> {

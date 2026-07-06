@@ -10,6 +10,11 @@ import { CreateListaTarefaRepositoryDto } from "../dto/create.lista.tarefa.repos
 export class ListaTarefaRepository implements IListaTarefaRepository {
     constructor(private readonly prismaService: PrismaService) {}
 
+    async findByMany(): Promise<ListaTarefaEntity[]> {
+        const listas: lista_tarefa[] = await this.prismaService.lista_tarefa.findMany();
+        return listas.map(lista => this.toEntity(lista));
+    }
+
     async findById(id: number): Promise<ListaTarefaEntity> {
         const lista: lista_tarefa = await this.prismaService.lista_tarefa.findUniqueOrThrow({
             where: { id }

@@ -4,9 +4,10 @@ import { TarefasController } from './tarefas.controller';
 import { ITarefaRepository } from './repository/itarefa.repository';
 import { TarefaRepository } from './repository/tarefa.repository';
 import { ListaTarefaModule } from '../lista_tarefa/lista_tarefa.module';
+import { TagsModule } from 'src/tags/tags.module';
 
 @Module({
-  imports: [ListaTarefaModule],
+  imports: [ListaTarefaModule, TagsModule],
   providers: [
     TarefasService,
     {

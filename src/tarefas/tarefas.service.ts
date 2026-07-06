@@ -2,20 +2,22 @@ import { ITarefaRepository } from './repository/itarefa.repository';
 import { TarefaCreateDto } from './dto/tarefa.create.dto';
 import { TarefaResponseDto } from './dto/tarefa.response.dto';
 import { ListaTarefaService } from '../lista_tarefa/lista_tarefa.service';
-import { Injectable, UnauthorizedException} from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException} from '@nestjs/common';
 import { TarefaEntity } from './entity/tarefa.entity';
 import { TarefaUpdataDto } from './dto/tarefa.update.dto';
 import { BuscarTarefasQueryDto } from './dto/buscar_tarefas_query.dto';
-import { ListaTarefaEntity } from 'src/lista_tarefa/entity/lista.tarefa.entity';
-import { IListaTarefaRepository } from 'src/lista_tarefa/repository/ilista.tarefas.repository';
-import { TarefaFiltro } from './repository/tarefa.filtro';
+import { TarefaFiltro } from './repository/itarefa.filtro';
+import { ResponseListaTarefaDto } from 'src/lista_tarefa/dto/response.lista.tarefa.dto';
+import { TagsCreateDto } from 'src/tags/dto/tags.create.dto';
+import { TagsResponseDto } from 'src/tags/dto/tags.response.dto';
+import { TagsService } from 'src/tags/tags.service';
 
 @Injectable()
 export class TarefasService {
     constructor(
         private tarefaRepository: ITarefaRepository,
         private listaTarefaService: ListaTarefaService,
-        private listaTarefaRepository: IListaTarefaRepository    
+        private tagsService: TagsService     
     ){}
 
     async create(idUserAuth: number, tarefaCreateDto: TarefaCreateDto): Promise<TarefaResponseDto>{
@@ -29,16 +31,21 @@ export class TarefasService {
         idLista: number,
         query: BuscarTarefasQueryDto
     ): Promise<TarefaResponseDto[]>{
-        await this.listaTarefaService.retornePorId(idLista, idUserAuth);
+        await this.listaTarefaService.retornePorIdAuth(idLista, idUserAuth);
 
-            const filtro: TarefaFiltro = {
-                idLista,
-                status: query.status,
-                prioridade: query.prioridade,
-                ordenarPor: query.sort,
-                direcao: query.order ?? 'asc',
-            };  
+        if(query.tag){
+            const tag: TagsResponseDto | null = await this.tagsService.retornarByName(query.tag);
+            if(!tag) throw new NotFoundException("tag nao existente");
+        }
 
+        const filtro: TarefaFiltro = {
+            idLista,
+            status: query.status,
+            prioridade: query.prioridade,
+            ordenarPor: query.sort,
+            tag: query.tag,
+            direcao: query.order ?? 'asc',
+        }; 
         const tarefas = await this.tarefaRepository.findByListaId(filtro);
         return tarefas.map(tarefa => this.toResponseDto(tarefa));
     }
@@ -65,6 +72,20 @@ export class TarefasService {
         await this.tarefaRepository.delete(idTarefa);
     }
 
+    async relacionaTagTarefa(idTarefa: number, idUserAuth: number, tagsCreateDto: TagsCreateDto): Promise<TagsResponseDto>{
+        const tarefa: TarefaEntity = await this.tarefaRepository.findById(idTarefa);
+        if(! await this.isAuthorized(tarefa.lista_id, idUserAuth)) throw new UnauthorizedException();
+
+        let tag: TagsResponseDto | null = await this.tagsService.retornarByName(tagsCreateDto.name);
+
+        if(!tag){
+            tag = await this.tagsService.criar(tagsCreateDto, idUserAuth);
+        }
+
+        await this.tarefaRepository.adicionarTag(idTarefa, tag.id)
+        return tag;
+    }
+
     private toResponseDto(tarefa: TarefaEntity): TarefaResponseDto {
         return {
             id: tarefa.id,
@@ -78,7 +99,7 @@ export class TarefasService {
     }
 
     private async isAuthorized(idLista: number, idUserAuth: number): Promise<boolean>{
-        const lista: ListaTarefaEntity = await this.listaTarefaRepository.findById(idLista);
+        const lista: ResponseListaTarefaDto = await this.listaTarefaService.retornePorId(idLista);
         if(lista.userId == idUserAuth) return true;
 
         return false;

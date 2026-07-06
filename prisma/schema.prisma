@@ -20,7 +20,10 @@ model user {
   name  String
   email String @unique
   senha String
-  tarefas lista_tarefa[]
+
+  listas_tarefas lista_tarefa[]
+
+  tags_criador tags[]
 }
 
 model tarefa {
@@ -32,6 +35,8 @@ model tarefa {
 
   lista_id Int
   lista lista_tarefa @relation(fields: [lista_id], references: [id], onDelete: Cascade)
+
+  tags tags[]
 } 
 
 model lista_tarefa {
@@ -42,4 +47,14 @@ model lista_tarefa {
   user user @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   tarefas tarefa[]
-} 
+}
+
+model tags{
+  id Int @id @default(autoincrement())
+  name String @unique
+
+  user_id Int 
+  user user @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  tarefas tarefa[]
+}
