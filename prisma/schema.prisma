@@ -43,8 +43,7 @@ model projeto {
   id Int @id @default(autoincrement())
   nome String
 
-  user_id Int 
-  user user @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user user[]
 
   atividades atividade[]
 }
