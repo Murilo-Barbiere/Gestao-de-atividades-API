@@ -5,4 +5,3 @@ export class CreateProjetoDto {
     @IsString()
     nome!: string;
 }
-

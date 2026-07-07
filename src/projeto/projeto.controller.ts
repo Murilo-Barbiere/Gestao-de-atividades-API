@@ -4,6 +4,8 @@ import { CreateProjetoDto } from './dto/create.projeto.dto';
 import type { RequestWithUser } from 'src/auth/interfaces/request-with-user.interface';
 import { ResponseProjetoDto } from './dto/response.projeto.dto';
 import { UpdateProjetoDto } from './dto/update.projeto.dto';
+import { NewParticipanteDto } from './dto/new_participante.dto';
+import { UserResponseDto } from 'src/users/dto/user.response.dto';
 
 @Controller('projeto')
 export class ProjetoController {
@@ -15,6 +17,34 @@ export class ProjetoController {
     @Req() requestUser: RequestWithUser
   ): Promise<ResponseProjetoDto>{
     return await this.projetoService.criar(requestUser.user.id, createProjetoDto);
+  }
+
+  @Post(":idProjeto/participante")
+  async addparticipanteNoProjeto(
+    @Req() requestUser: RequestWithUser,
+    @Body() newParticipanteDto: NewParticipanteDto,
+    @Param("idProjeto", ParseIntPipe) idProjeto: number
+  ): Promise<UserResponseDto>{
+    return await this.projetoService.addParticipante(requestUser.user.id, idProjeto, newParticipanteDto.email);
+  }
+
+  @Get(":idProjeto/participante")
+  async retornaParticipantesDoProjeto(
+    @Req() requestUser: RequestWithUser,
+    @Param("idProjeto", ParseIntPipe) idProjeto: number
+  ): Promise<UserResponseDto[]>{
+    return await this.projetoService.listarParticipantes(idProjeto, requestUser.user.id);
+  }
+
+  @Delete(":idProjeto/participante/:idParticipante")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async removeParticipanteDoProjeto(
+    @Req() requestUser: RequestWithUser,
+    @Param("idProjeto", ParseIntPipe) idProjeto: number,
+    @Param("idParticipante", ParseIntPipe) idParticipante: number
+  ): Promise<void>{
+    console.log(1)
+    return await this.projetoService.removerParticipante(idProjeto, requestUser.user.id, idParticipante);
   }
 
   @Get()

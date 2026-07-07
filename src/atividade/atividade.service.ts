@@ -7,7 +7,6 @@ import { AtividadeEntity } from './entity/atividade.entity';
 import { AtividadeUpdateDto } from './dto/atividade.update.dto';
 import { BuscarAtividadesQueryDto } from './dto/buscar_atividades_query.dto';
 import { AtividadeFiltro } from './repository/iatividade.filtro';
-import { ResponseProjetoDto } from '../projeto/dto/response.projeto.dto';
 import { TagsCreateDto } from '../tags/dto/tags.create.dto';
 import { TagsResponseDto } from '../tags/dto/tags.response.dto';
 import { TagsService } from '../tags/tags.service';
@@ -99,8 +98,7 @@ export class AtividadeService {
     }
 
     private async isAuthorized(idProjeto: number, idUserAuth: number): Promise<boolean>{
-        const projeto: ResponseProjetoDto = await this.projetoService.retornePorId(idProjeto);
-        if(projeto.userId == idUserAuth) return true;
+        if(await this.projetoService.retornePorIdAuth(idProjeto, idUserAuth)) return true;
 
         return false;
     }
