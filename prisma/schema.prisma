@@ -8,7 +8,7 @@ datasource db {
   provider = "postgresql"
 }
 
-enum PrioridadeTarefa {
+enum PrioridadeAtividade {
   URGENTE
   ALTA
   MEDIA
@@ -21,32 +21,32 @@ model user {
   email String @unique
   senha String
 
-  listas_tarefas lista_tarefa[]
+  projetos projeto[]
 
   tags_criador tags[]
 }
 
-model tarefa {
+model atividade {
   id Int @id @default(autoincrement())
   titulo String
   realizada Boolean
-  prioridade PrioridadeTarefa
+  prioridade PrioridadeAtividade
   data_vencimento DateTime @db.Date
 
-  lista_id Int
-  lista lista_tarefa @relation(fields: [lista_id], references: [id], onDelete: Cascade)
+  projeto_id Int
+  projeto projeto @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
 
   tags tags[]
 } 
 
-model lista_tarefa {
+model projeto {
   id Int @id @default(autoincrement())
   nome String
 
   user_id Int 
   user user @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
-  tarefas tarefa[]
+  atividades atividade[]
 }
 
 model tags{
@@ -56,5 +56,5 @@ model tags{
   user_id Int 
   user user @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
-  tarefas tarefa[]
+  atividades atividade[]
 }
