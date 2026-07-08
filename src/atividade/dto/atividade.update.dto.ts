@@ -19,4 +19,8 @@ export class AtividadeUpdateDto {
     @IsDate()
     @IsOptional()
     dataVencimento?: Date;
+
+    @IsString()
+    @IsOptional()
+    texto?: string;
 }

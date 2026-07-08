@@ -16,13 +16,18 @@ export class AtividadeRepository implements IAtividadeRepository {
     constructor(private readonly prismaService: PrismaService) {}
 
     async findById(id: number): Promise<AtividadeEntity> {
-        const atividade: atividade = await this.prismaService.atividade.findUniqueOrThrow({
-            where: { id }
+        const  atividade = await this.prismaService.atividade.findUniqueOrThrow({
+            where: { id },
+            include: 
+            {
+                tags: true,
+            },
         });
+
         return this.toEntity(atividade);
     }
 
-    async findByListaId(filtro: AtividadeFiltro): Promise<AtividadeEntity[]> {
+    async findByProjetoId(filtro: AtividadeFiltro): Promise<AtividadeEntity[]> {
         const where = this.montarWhere(filtro);
         const orderBy = this.montarOrderBy(filtro);
 
@@ -89,7 +94,7 @@ export class AtividadeRepository implements IAtividadeRepository {
         });
     }
 
-    private toEntity(atividade: atividade & { tags?: any[] }): AtividadeEntity {
+    private toEntity(atividade: atividade & { tags?: any[] , texto?: string | null}): AtividadeEntity {
         const tagsMapeadas: TagsEntity[] = atividade.tags?.map(
             tag => new TagsEntity(tag.id, tag.name, tag.user_id)
         ) ?? [];
@@ -103,6 +108,7 @@ export class AtividadeRepository implements IAtividadeRepository {
             atividade.projeto_id,
             tagsMapeadas,
             atividade.paiId ?? undefined,
+            atividade.texto ?? undefined,
         );
     }
 

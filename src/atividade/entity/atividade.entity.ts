@@ -11,6 +11,7 @@ export class AtividadeEntity{
         public projeto_id: number,
         public tags: TagsEntity[],
         public paiId?: number,
+        public texto?: string,
     ){}
 
     get vencido(): boolean {

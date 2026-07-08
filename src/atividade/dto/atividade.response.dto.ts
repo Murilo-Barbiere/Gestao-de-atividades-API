@@ -10,5 +10,6 @@ export class AtividadeResponseDto{
     prioridade!: PrioridadeAtividade;
     vencido!: boolean;
     paiId?: number;
+    texto?: string;
     tags!: TagsEntity[];
 }

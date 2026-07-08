@@ -53,7 +53,7 @@ export class AtividadeService {
             busca: query.busca,
             direcao: query.order ?? 'asc',
         }; 
-        const atividades = await this.atividadeRepository.findByListaId(filtro);
+        const atividades = await this.atividadeRepository.findByProjetoId(filtro);
         const atividadeEntity = atividades.map(atividade => this.toResponseDto(atividade));
 
         return this.hierarquia(atividadeEntity);
@@ -105,7 +105,8 @@ export class AtividadeService {
             prioridade: atividade.prioridade,
             vencido: atividade.vencido,
             paiId: atividade.paiId,
-            tags: atividade.tags
+            texto: atividade.texto,
+            tags: atividade.tags,
         };
     }
 

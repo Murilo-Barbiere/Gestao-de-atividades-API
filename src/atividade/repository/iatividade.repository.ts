@@ -5,7 +5,7 @@ import { AtividadeFiltro } from "./iatividade.filtro";
 
 export abstract class IAtividadeRepository{
     abstract findById(id: number): Promise<AtividadeEntity>;
-    abstract findByListaId(filtro: AtividadeFiltro): Promise<AtividadeEntity[]>;
+    abstract findByProjetoId(filtro: AtividadeFiltro): Promise<AtividadeEntity[]>;
     abstract create(data: AtividadeCreateDto): Promise<AtividadeEntity>;
     abstract update(id: number, data: AtividadeUpdateDto): Promise<AtividadeEntity>;
     abstract delete(id: number): Promise<void>;

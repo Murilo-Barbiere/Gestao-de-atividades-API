@@ -23,4 +23,8 @@ export class AtividadeCreateDto{
     @IsOptional()
     @IsNumber()
     paiId?: number;
+
+    @IsString()
+    @IsOptional()
+    texto?: string;
 }
