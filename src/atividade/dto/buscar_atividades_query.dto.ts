@@ -22,6 +22,10 @@ export class BuscarAtividadesQueryDto {
     tag?: string;
 
     @IsOptional()
+    @IsString()
+    busca?: string;
+
+    @IsOptional()
     @IsIn(["asc", "desc"])
     order?: "asc" | "desc";
 }
