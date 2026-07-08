@@ -7,7 +7,9 @@ import { AtividadeUpdateDto } from './dto/atividade.update.dto';
 import { BuscarAtividadesQueryDto } from './dto/buscar_atividades_query.dto';
 import { TagsCreateDto } from '../tags/dto/tags.create.dto';
 import { TagsResponseDto } from '../tags/dto/tags.response.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Atividades')
 @Controller()
 export class AtividadeController {
     constructor(private atividadeService: AtividadeService){}

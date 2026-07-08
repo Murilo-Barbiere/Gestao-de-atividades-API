@@ -4,8 +4,10 @@ import { TagsCreateDto } from './dto/tags.create.dto';
 import { TagsUpdateDto } from './dto/tags.update.dto';
 import { TagsResponseDto } from './dto/tags.response.dto';
 import type { RequestWithUser } from 'src/auth/interfaces/request-with-user.interface';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('tags')
+@ApiTags('Tags')
 export class TagsController {
     constructor(private tagsService: TagsService){}
 

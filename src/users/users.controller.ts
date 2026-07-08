@@ -4,8 +4,10 @@ import type { RequestWithUser } from "../auth/interfaces/request-with-user.inter
 import { UsersService } from './users.service';
 import { UserUpdataDto } from './dto/user.update.dto';
 import { UserResponseDto } from './dto/user.response.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('users')
+@ApiTags('Users')
 export class UsersController {
     constructor(private usersService: UsersService){}
 

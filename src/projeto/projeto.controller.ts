@@ -6,8 +6,10 @@ import { ResponseProjetoDto } from './dto/response.projeto.dto';
 import { UpdateProjetoDto } from './dto/update.projeto.dto';
 import { NewParticipanteDto } from './dto/new_participante.dto';
 import { UserResponseDto } from 'src/users/dto/user.response.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('projeto')
+@ApiTags('Projeto')
 export class ProjetoController {
   constructor(private readonly projetoService: ProjetoService) {}
 

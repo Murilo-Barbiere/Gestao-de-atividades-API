@@ -6,7 +6,9 @@ import { AuthRegisterResponseDto } from './dto/response/auth.register.response.d
 import { AuthLoginRequestDto } from './dto/request/auth.login.request.dto';
 import { PublicRoute } from './decorators/auth.public.decorator';
 import { AuthLoginResponseDto } from './dto/response/auth.login.response.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
