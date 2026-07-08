@@ -1,4 +1,5 @@
 import { PrioridadeAtividade } from "src/common/enums/prioridade_atividade.enum";
+import { TagsEntity } from "src/tags/entity/tags.entity";
 
 export class AtividadeResponseDto{
     id!: number;
@@ -9,4 +10,5 @@ export class AtividadeResponseDto{
     prioridade!: PrioridadeAtividade;
     vencido!: boolean;
     paiId?: number;
+    tags!: TagsEntity[];
 }

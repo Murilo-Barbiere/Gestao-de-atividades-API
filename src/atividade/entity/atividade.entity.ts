@@ -1,4 +1,5 @@
 import { PrioridadeAtividade } from "src/common/enums/prioridade_atividade.enum";
+import { TagsEntity } from "src/tags/entity/tags.entity";
 
 export class AtividadeEntity{
     constructor(
@@ -8,7 +9,8 @@ export class AtividadeEntity{
         public prioridade: PrioridadeAtividade,
         public data_vencimento: Date,
         public projeto_id: number,
-        public paiId?: number
+        public tags: TagsEntity[],
+        public paiId?: number,
     ){}
 
     get vencido(): boolean {

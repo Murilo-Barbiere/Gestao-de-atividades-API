@@ -9,6 +9,7 @@ import { PrioridadeAtividade } from "../../common/enums/prioridade_atividade.enu
 import { AtividadeFiltro } from "./iatividade.filtro";
 import { StatusFiltro } from "../../common/enums/status_filtro.enum";
 import { AtividadeOrdenacao } from "../../common/enums/atividade_ordenacao.enum";
+import { TagsEntity } from "src/tags/entity/tags.entity";
 
 @Injectable()
 export class AtividadeRepository implements IAtividadeRepository {
@@ -25,7 +26,14 @@ export class AtividadeRepository implements IAtividadeRepository {
         const where = this.montarWhere(filtro);
         const orderBy = this.montarOrderBy(filtro);
 
-        const atividades = await this.prismaService.atividade.findMany({ where, orderBy });
+        const atividades = await this.prismaService.atividade.findMany({
+            where,
+            include: {
+                tags: true,
+            },
+            orderBy 
+        });
+
         return atividades.map(atividade => this.toEntity(atividade));
     }
 
@@ -38,7 +46,7 @@ export class AtividadeRepository implements IAtividadeRepository {
                 prioridade: data.prioridadeAtividade,
                 projeto_id: data.idProjeto,
                 data_vencimento: data.dataVencimento,
-                paiId: data.paiId
+                paiId: data.paiId,
             }
         });
         return this.toEntity(atividade);
@@ -81,7 +89,11 @@ export class AtividadeRepository implements IAtividadeRepository {
         });
     }
 
-    private toEntity(atividade: atividade): AtividadeEntity {
+    private toEntity(atividade: atividade & { tags?: any[] }): AtividadeEntity {
+        const tagsMapeadas: TagsEntity[] = atividade.tags?.map(
+            tag => new TagsEntity(tag.id, tag.name, tag.user_id)
+        ) ?? [];
+
         return new AtividadeEntity(
             atividade.id,
             atividade.titulo,
@@ -89,7 +101,8 @@ export class AtividadeRepository implements IAtividadeRepository {
             atividade.prioridade as PrioridadeAtividade,
             atividade.data_vencimento,
             atividade.projeto_id,
-            atividade.paiId ?? undefined
+            tagsMapeadas,
+            atividade.paiId ?? undefined,
         );
     }
 

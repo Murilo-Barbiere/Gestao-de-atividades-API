@@ -104,7 +104,8 @@ export class AtividadeService {
             data_vencimento: atividade.data_vencimento,
             prioridade: atividade.prioridade,
             vencido: atividade.vencido,
-            paiId: atividade.paiId
+            paiId: atividade.paiId,
+            tags: atividade.tags
         };
     }
 
