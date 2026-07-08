@@ -36,6 +36,11 @@ model atividade {
   projeto_id Int
   projeto projeto @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
 
+  paiId Int?
+  pai atividade? @relation("HierarquiaAtividade", fields: [paiId], references: [id])
+
+  subtarefas atividade[] @relation("HierarquiaAtividade")
+
   tags tags[]
 } 
 

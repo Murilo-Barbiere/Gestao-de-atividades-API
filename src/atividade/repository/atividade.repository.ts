@@ -37,7 +37,8 @@ export class AtividadeRepository implements IAtividadeRepository {
                 realizada: false,
                 prioridade: data.prioridadeAtividade,
                 projeto_id: data.idProjeto,
-                data_vencimento: data.dataVencimento
+                data_vencimento: data.dataVencimento,
+                paiId: data.paiId
             }
         });
         return this.toEntity(atividade);
@@ -87,7 +88,8 @@ export class AtividadeRepository implements IAtividadeRepository {
             atividade.realizada,
             atividade.prioridade as PrioridadeAtividade,
             atividade.data_vencimento,
-            atividade.projeto_id
+            atividade.projeto_id,
+            atividade.paiId ?? undefined
         );
     }
 

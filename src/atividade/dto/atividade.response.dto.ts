@@ -8,4 +8,5 @@ export class AtividadeResponseDto{
     data_vencimento!: Date;
     prioridade!: PrioridadeAtividade;
     vencido!: boolean;
+    paiId?: number;
 }

@@ -2,7 +2,7 @@ import { IAtividadeRepository } from './repository/iatividade.repository';
 import { AtividadeCreateDto } from './dto/atividade.create.dto';
 import { AtividadeResponseDto } from './dto/atividade.response.dto';
 import { ProjetoService } from '../projeto/projeto.service';
-import { Injectable, NotFoundException, UnauthorizedException} from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException} from '@nestjs/common';
 import { AtividadeEntity } from './entity/atividade.entity';
 import { AtividadeUpdateDto } from './dto/atividade.update.dto';
 import { BuscarAtividadesQueryDto } from './dto/buscar_atividades_query.dto';
@@ -21,6 +21,13 @@ export class AtividadeService {
 
     async create(idUserAuth: number, atividadeCreateDto: AtividadeCreateDto): Promise<AtividadeResponseDto>{
         if(! await this.isAuthorized(atividadeCreateDto.idProjeto, idUserAuth)) throw new UnauthorizedException();
+
+        if(atividadeCreateDto.paiId){
+            const atividadePai = await this.atividadeRepository.findById(atividadeCreateDto.paiId)
+            if(atividadePai.projeto_id != atividadeCreateDto.idProjeto){
+                throw new ForbiddenException("Você não tem permissão para criar atividades neste projeto.");
+            }   
+        }
 
         return await this.atividadeRepository.create(atividadeCreateDto);
     }
@@ -47,7 +54,9 @@ export class AtividadeService {
             direcao: query.order ?? 'asc',
         }; 
         const atividades = await this.atividadeRepository.findByListaId(filtro);
-        return atividades.map(atividade => this.toResponseDto(atividade));
+        const atividadeEntity = atividades.map(atividade => this.toResponseDto(atividade));
+
+        return this.hierarquia(atividadeEntity);
     }
 
     async retornePorId(idUserAuth: number, idAtividade: number): Promise<AtividadeResponseDto> {
@@ -94,7 +103,8 @@ export class AtividadeService {
             projeto_id: atividade.projeto_id,
             data_vencimento: atividade.data_vencimento,
             prioridade: atividade.prioridade,
-            vencido: atividade.vencido
+            vencido: atividade.vencido,
+            paiId: atividade.paiId
         };
     }
 
@@ -102,5 +112,31 @@ export class AtividadeService {
         if(await this.projetoService.retornePorIdAuth(idProjeto, idUserAuth)) return true;
 
         return false;
+    }
+
+    private hierarquia(atividades: AtividadeResponseDto[]) {
+        type AtividadeArvore = AtividadeResponseDto & {
+            subAtividades: AtividadeArvore[];
+        };
+
+        const mapa = new Map<number, AtividadeArvore>();
+
+        atividades.forEach(atividade => {
+            mapa.set(atividade.id, { ...atividade, subAtividades: [] });
+        });
+
+        const raiz: AtividadeArvore[] = [];
+
+        mapa.forEach(atividade => {
+            const pai = atividade.paiId !== undefined ? mapa.get(atividade.paiId) : undefined;
+
+            if (pai) {
+                pai.subAtividades.push(atividade);
+            } else {
+                raiz.push(atividade);
+            }
+        });
+
+        return raiz;
     }
 }

@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsDate, IsEnum, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsDate, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { PrioridadeAtividade } from "src/common/enums/prioridade_atividade.enum";
 
 export class AtividadeCreateDto{
@@ -19,4 +19,8 @@ export class AtividadeCreateDto{
     @Type(() => Date)
     @IsDate()
     dataVencimento!: Date;
+
+    @IsOptional()
+    @IsNumber()
+    paiId?: number;
 }
