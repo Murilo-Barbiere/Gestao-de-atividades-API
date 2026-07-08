@@ -6,6 +6,7 @@ export interface AtividadeFiltro {
     idProjeto: number;
     status?: StatusFiltro;
     tag?: string;
+    busca?: string;
 
     prioridade?: PrioridadeAtividade;
     ordenarPor?: AtividadeOrdenacao;

@@ -43,6 +43,7 @@ export class AtividadeService {
             prioridade: query.prioridade,
             ordenarPor: query.sort,
             tag: query.tag,
+            busca: query.busca,
             direcao: query.order ?? 'asc',
         }; 
         const atividades = await this.atividadeRepository.findByListaId(filtro);

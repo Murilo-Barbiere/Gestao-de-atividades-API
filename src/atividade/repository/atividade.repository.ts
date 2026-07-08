@@ -95,6 +95,26 @@ export class AtividadeRepository implements IAtividadeRepository {
     private montarWhere(filtro: AtividadeFiltro): Prisma.atividadeWhereInput {
         const where: Prisma.atividadeWhereInput = { projeto_id: filtro.idProjeto };
 
+        if(filtro.busca) {
+            where.OR = [
+            {
+                titulo: {
+                    contains: filtro.busca,
+                    mode: 'insensitive',
+                },
+            },
+            {
+                tags: {
+                    some: {
+                        name: {
+                            contains: filtro.busca,
+                            mode: 'insensitive',
+                        },
+                    },
+                },
+            }];
+        }
+
         if(filtro.tag) where.tags = {
             some: {
                 name: filtro.tag 
@@ -104,7 +124,7 @@ export class AtividadeRepository implements IAtividadeRepository {
         switch (filtro.status) {
             case StatusFiltro.PENDENTE:
                 where.realizada = false;
-                break;
+                break;  
             case StatusFiltro.CONCLUIDA:
                 where.realizada = true;
                 break;
