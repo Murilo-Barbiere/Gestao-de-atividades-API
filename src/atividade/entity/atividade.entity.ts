@@ -7,7 +7,8 @@ export class AtividadeEntity{
         public realizada: boolean,
         public prioridade: PrioridadeAtividade,
         public data_vencimento: Date,
-        public projeto_id: number
+        public projeto_id: number,
+        public paiId?: number
     ){}
 
     get vencido(): boolean {
