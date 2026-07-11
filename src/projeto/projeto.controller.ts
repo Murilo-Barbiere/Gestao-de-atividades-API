@@ -7,6 +7,7 @@ import { UpdateProjetoDto } from './dto/update.projeto.dto';
 import { NewParticipanteDto } from './dto/new_participante.dto';
 import { UserResponseDto } from 'src/users/dto/user.response.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { ResponseProjetoParticipanteDto } from './dto/response.projetoParticipante.dto';
 
 @Controller('projeto')
 @ApiTags('Projeto')
@@ -50,8 +51,8 @@ export class ProjetoController {
   }
 
   @Get()
-  async retornaProjetos(@Req() requestUser: RequestWithUser): Promise<ResponseProjetoDto[]>{
-    return await this.projetoService.ListasDeTarefaDoUsuario(requestUser.user.id);
+  async retornaProjetos(@Req() requestUser: RequestWithUser): Promise<ResponseProjetoParticipanteDto[]>{
+    return await this.projetoService.ListaProjetosDoUsuario(requestUser.user.id);
   }
   
   @Get(":idProjeto")

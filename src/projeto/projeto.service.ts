@@ -6,6 +6,7 @@ import { UpdateProjetoDto } from './dto/update.projeto.dto';
 import { UserEntity } from 'src/users/entity/user.entity';
 import { IUserRepository } from 'src/users/repository/iuser.repository';
 import { UserResponseDto } from 'src/users/dto/user.response.dto';
+import { ResponseProjetoParticipanteDto } from './dto/response.projetoParticipante.dto';
 
 @Injectable()
 export class ProjetoService {
@@ -74,8 +75,16 @@ export class ProjetoService {
     return await this.projetoRepository.findById(idProjeto);
   }
 
-  async ListasDeTarefaDoUsuario(idUserAuth: number): Promise<ResponseProjetoDto[]> {
-    return await this.projetoRepository.findByUsersId(idUserAuth);
+  async ListaProjetosDoUsuario(idUserAuth: number): Promise<ResponseProjetoParticipanteDto[]> {
+    const projetos = await this.projetoRepository.findByUsersId(idUserAuth);
+
+    return await Promise.all(
+      projetos.map(async(projeto) => ({
+        id: projeto.id,
+        nome: projeto.nome,
+        participantes: await this.listarParticipantes(projeto.id,idUserAuth)
+      }))
+    );
   }
   
   async retornaTodos(): Promise<ResponseProjetoDto[]>{
