@@ -25,6 +25,18 @@ export class UsersService {
         return await this.userRepostory.findById(id);
     }
 
+    async retornaUserid(id: number, idAuthUser: number): Promise<UserResponseDto>{
+        if(id != idAuthUser) throw new UnauthorizedException();
+
+        const user: UserEntity =  await this.userRepostory.findById(id);
+
+        return {
+            id: user.id,
+            name: user.name,
+            email: user.email
+        }  
+    }
+
     async saveUser(userDto: AuthRegisterRequestDto, senhaHash: string): Promise<UserResponseDto>{
         return await this.userRepostory.create({
             name: userDto.name,
