@@ -44,7 +44,6 @@ export class AtividadeController {
         @Param("id", ParseIntPipe) id: number,
         @Body() atividadeUpdateDto: AtividadeUpdateDto,
     ): Promise<AtividadeResponseDto> {
-        console.log("1")
         return this.atividadeService.update(req.user.id, id, atividadeUpdateDto);
     }
 
