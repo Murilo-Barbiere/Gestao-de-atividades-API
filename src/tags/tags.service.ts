@@ -29,7 +29,6 @@ export class TagsService {
     }
     
     async retornarTodos(): Promise<TagsResponseDto[]>{
-        console.log("1")
         return this.tagsRepository.findMany();
     }
 

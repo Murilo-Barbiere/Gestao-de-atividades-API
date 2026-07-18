@@ -71,6 +71,7 @@ export class AtividadeService {
         if(! await this.isAuthorized(atividade.projeto_id, idUserAuth)) throw new UnauthorizedException();
 
         const atividadeAtualizada = await this.atividadeRepository.update(idAtividade, atividadeUpdateDto);
+        console.log(atividade)
         return this.toResponseDto(atividadeAtualizada);
     }
 

@@ -64,6 +64,7 @@ export class AtividadeRepository implements IAtividadeRepository {
                 titulo: data.titulo,
                 realizada: data.realizada,
                 prioridade: data.prioridadeAtividade,
+                texto: data.texto
             }
         });
         return this.toEntity(atividade);

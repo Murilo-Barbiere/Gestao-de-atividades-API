@@ -18,11 +18,9 @@ export class TagsController {
 
     @Get()
     async retornaTodasTags(): Promise<TagsResponseDto[]>{
-        console.log("1")
         return this.tagsService.retornarTodos();
     }
     
-    //arruma isso dps
     @Get(":name")
     async retornaTagsPorName(@Param("name") name_tag: string): Promise<TagsResponseDto| null>{
         return this.tagsService.retornarByName(name_tag);
